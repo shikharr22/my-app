@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useSyncExternalStore } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getDatabase, ref, child, get } from "firebase/database";
 import database from "./Firebase";
 import "./App.css";
 
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 import {
   ScatterChart,
   Scatter,
@@ -23,11 +23,13 @@ const Home = () => {
   const [gauge, setGauge] = useState(0);
   const [endDiameter, setEndDiameter] = useState(0);
   const [reducedDiameter, setReducedDiameter] = useState(0);
-  const [strain, SetStrain] = useState([]);
-  const [stress, SetStress] = useState([]);
+  const [elongation, setElongation] = useState(0);
+  const [tensile, setTensile] = useState(0);
+  const [breaking, setBreaking] = useState(0);
   const [load, setLoad] = useState(0);
   const [dataArray, setDataArray] = useState([[]]);
   const [data01, setData01] = useState([]);
+  const [counter, setCounter] = useState(0);
 
   const handleLength = (e) => {
     setLength(e.target.value);
@@ -73,13 +75,16 @@ const Home = () => {
       load,
       data.distance
     );
+    setCounter(counter + 1);
   };
 
   const handleEndExperiment = (e) => {
     e.preventDefault();
     console.log(dataArray);
+    let maxLoad = 0;
+    let originalArea;
     for (let i = 1; i < dataArray.length; i++) {
-      let originalArea = 3.14 * dataArray[i][4] * dataArray[i][4] * 0.25;
+      originalArea = 3.14 * dataArray[i][4] * dataArray[i][4] * 0.25;
       let currStress = (dataArray[i][5] * 9.81) / originalArea;
 
       console.log(currStress);
@@ -88,8 +93,19 @@ const Home = () => {
       let currStrain = (currLength - initialLength) / dataArray[i][2];
       setData01((current) => [...current, { x: currStrain, y: currStress }]);
       console.log(currStrain);
+      if (dataArray[i][5] > maxLoad) {
+        maxLoad = dataArray[i][5];
+      }
     }
     document.getElementById("graphDisplay").style.display = "";
+    document.getElementById("container").style.width = "50vw";
+
+    let lastDist = dataArray[dataArray.length - 1][6];
+    let firstDist = dataArray[0][6];
+    setElongation((lastDist - firstDist) / gauge);
+
+    setTensile(maxLoad / originalArea);
+    setBreaking(dataArray[dataArray.length - 1][5] / originalArea);
   };
 
   const dbRef = ref(database);
@@ -127,7 +143,9 @@ const Home = () => {
           margin: "3.5vh",
         }}
       >
-        <Link to="/" style={{textDecoration:"none",color:"black"}}>Back</Link>
+        <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+          Back
+        </Link>
       </button>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div id="container">
@@ -151,6 +169,7 @@ const Home = () => {
                   borderWidth: "0px 0px 2px 0px",
                   borderColor: "#2a3439",
                   marginBottom: "1rem",
+                  backgroundColor: "transparent",
                 }}
                 type="text"
                 placeholder="Total length(in mm)"
@@ -167,6 +186,7 @@ const Home = () => {
                   borderWidth: "0px 0px 2px 0px",
                   borderColor: "#2a3439",
                   marginBottom: "1rem",
+                  backgroundColor: "transparent",
                 }}
                 type="text"
                 placeholder="Length between shoulders"
@@ -183,6 +203,7 @@ const Home = () => {
                   borderWidth: "0px 0px 2px 0px",
                   borderColor: "#2a3439",
                   marginBottom: "1rem",
+                  backgroundColor: "transparent",
                 }}
                 type="text"
                 placeholder="Gauge Length"
@@ -199,6 +220,7 @@ const Home = () => {
                   borderWidth: "0px 0px 2px 0px",
                   borderColor: "#2a3439",
                   marginBottom: "1rem",
+                  backgroundColor: "transparent",
                 }}
                 type="text"
                 placeholder="Diameter at ends"
@@ -215,6 +237,7 @@ const Home = () => {
                   borderWidth: "0px 0px 2px 0px",
                   borderColor: "#2a3439",
                   marginBottom: "1rem",
+                  backgroundColor: "transparent",
                 }}
                 type="text"
                 placeholder="Diameter at reduced section"
@@ -232,12 +255,38 @@ const Home = () => {
                   borderWidth: "0px 0px 2px 0px",
                   borderColor: "#2a3439",
                   marginBottom: "1rem",
+                  backgroundColor: "transparent",
                 }}
                 type="text"
                 placeholder="Load in kg"
                 onChange={handleLoad}
               />
             </label>
+            <p
+              style={{
+                marginBottom: "2rem",
+                fontSize: "0.8rem",
+                fontWeight: "bold",
+              }}
+            >
+              Total readings: {counter}
+            </p>
+            <input
+              style={{
+                color: "white",
+                backgroundColor: "#2a3439",
+                fontSize: "0.8rem",
+                marginBottom: "1rem",
+                width: "10rem",
+                height: "2rem",
+                padding: "0.5rem",
+                border: "none",
+                borderRadius: "0.2rem",
+                cursor: "pointer",
+              }}
+              type="submit"
+              value="Take Readings"
+            />
 
             <input
               style={{
@@ -250,23 +299,7 @@ const Home = () => {
                 padding: "0.5rem",
                 border: "none",
                 borderRadius: "0.2rem",
-                cursor:"pointer"
-              }}
-              type="submit"
-              value="Take Readings"
-            />
-            <input
-              style={{
-                color: "white",
-                backgroundColor: "#2a3439",
-                fontSize: "0.8rem",
-                marginBottom: "1rem",
-                width: "10rem",
-                height: "2rem",
-                padding: "0.5rem",
-                border: "none",
-                borderRadius: "0.2rem",
-                cursor:"pointer"
+                cursor: "pointer",
               }}
               type="submit"
               value="End Experiment"
@@ -290,7 +323,7 @@ const Home = () => {
             height={400}
             margin={{
               top: 20,
-              right:0,
+              right: 0,
               bottom: 20,
               left: 50,
             }}
@@ -309,6 +342,44 @@ const Home = () => {
               shape="dot"
             />
           </ScatterChart>
+          <p
+            style={{
+              marginBottom: "2rem",
+              fontSize: "1.0rem",
+              fontWeight: "bold",
+            }}
+          >
+            % Elongation:{" "}
+            <span style={{ fontSize: "0.8rem", color: "green" }}>
+              {elongation.toFixed(5)} %{" "}
+            </span>
+          </p>
+          <p
+            style={{
+              marginBottom: "2rem",
+              fontSize: "1.0rem",
+              fontWeight: "bold",
+            }}
+          >
+            Tensile Strength:{" "}
+            <span style={{ fontSize: "0.8rem", color: "green" }}>
+              {" "}
+              {tensile.toFixed(5)} N/mm*mm{" "}
+            </span>
+          </p>
+          <p
+            style={{
+              marginBottom: "2rem",
+              fontSize: "1.0rem",
+              fontWeight: "bold",
+            }}
+          >
+            % Breaking Strength:{" "}
+            <span style={{ fontSize: "0.8rem", color: "green" }}>
+              {" "}
+              {breaking.toFixed(5)} N/mm*mm{" "}
+            </span>
+          </p>
         </div>
       </div>
     </>

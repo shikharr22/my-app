@@ -3,17 +3,23 @@
   margin: 0;
   font-size: 15px;
   font-family: "Merriweather";
+  overflow:hidden;
   
 }
 
 #container {
-  width: 50vw ;
-  height: 90vh;
+  width: 100vw ;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top:5vh;
+  background: #62B5C8;
+  background: -webkit-linear-gradient(top left, #62B5C8, #D5ECEF);
+  background: -moz-linear-gradient(top left, #62B5C8, #D5ECEF);
+  background: linear-gradient(to bottom right, #62B5C8, #D5ECEF);
+  
   
 }
 
