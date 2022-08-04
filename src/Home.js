@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useSyncExternalStore } from "react";
 import { getDatabase, ref, child, get } from "firebase/database";
-import { initializeApp } from "firebase/app";
 import database from "./Firebase";
 import "./App.css";
+
+import {Link} from 'react-router-dom';
 import {
   ScatterChart,
   Scatter,
@@ -113,13 +114,28 @@ const Home = () => {
 
   return (
     <>
+      <button
+        style={{
+          width: "4vw",
+          height: "4vh",
+          border: "none",
+          backgroundColor: "white",
+          position: "absolute",
+          top: "0",
+          right: "0",
+          zIndex: "100",
+          margin: "3.5vh",
+        }}
+      >
+        <Link to="/" style={{textDecoration:"none",color:"black"}}>Back</Link>
+      </button>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div id="container">
           <form id="dataForm" onSubmit={handleSubmit}>
             <p
               style={{
                 marginBottom: "2rem",
-                fontSize: "2rem",
+                fontSize: "1.2rem",
                 fontWeight: "bold",
               }}
             >
@@ -233,23 +249,25 @@ const Home = () => {
                 height: "2rem",
                 padding: "0.5rem",
                 border: "none",
-                borderRadius:"0.2rem"
+                borderRadius: "0.2rem",
+                cursor:"pointer"
               }}
               type="submit"
               value="Take Readings"
             />
             <input
-             style={{
-              color: "white",
-              backgroundColor: "#2a3439",
-              fontSize: "0.8rem",
-              marginBottom: "1rem",
-              width: "10rem",
-              height: "2rem",
-              padding: "0.5rem",
-              border: "none",
-              borderRadius:"0.2rem"
-            }}
+              style={{
+                color: "white",
+                backgroundColor: "#2a3439",
+                fontSize: "0.8rem",
+                marginBottom: "1rem",
+                width: "10rem",
+                height: "2rem",
+                padding: "0.5rem",
+                border: "none",
+                borderRadius: "0.2rem",
+                cursor:"pointer"
+              }}
               type="submit"
               value="End Experiment"
               onClick={handleEndExperiment}
@@ -272,9 +290,9 @@ const Home = () => {
             height={400}
             margin={{
               top: 20,
-              right: 20,
+              right:0,
               bottom: 20,
-              left: 20,
+              left: 50,
             }}
           >
             <CartesianGrid />
@@ -284,7 +302,7 @@ const Home = () => {
             <Tooltip cursor={{ strokeDasharray: "3 3" }} />
             <Legend />
             <Scatter
-              name="Stress Strain data points"
+              name="data points"
               data={data01}
               fill="#8884d8"
               line
