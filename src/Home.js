@@ -101,7 +101,7 @@ const Home = () => {
     document.getElementById("container").style.width = "50vw";
 
     let lastDist = dataArray[dataArray.length - 1][6];
-    let firstDist = dataArray[0][6];
+    let firstDist = dataArray[1][6];
     setElongation((lastDist - firstDist) / gauge);
 
     setTensile(maxLoad / originalArea);
@@ -160,6 +160,7 @@ const Home = () => {
               OBSERVATIONS
             </p>
             <label style={{ margin: "1vh" }}>
+            <p style={{fontSize:"0.8rem"}}>Total length(in mm)</p>
               <input
                 style={{
                   fontSize: "0.8rem",
@@ -177,6 +178,7 @@ const Home = () => {
               />
             </label>
             <label style={{ margin: "1vh" }}>
+            <p style={{fontSize:"0.8rem"}}>Length between shoulders</p>
               <input
                 style={{
                   fontSize: "0.8rem",
@@ -194,6 +196,7 @@ const Home = () => {
               />
             </label>
             <label style={{ margin: "1vh" }}>
+            <p style={{fontSize:"0.8rem"}}>Gauge Length</p>
               <input
                 style={{
                   fontSize: "0.8rem",
@@ -211,6 +214,7 @@ const Home = () => {
               />
             </label>
             <label style={{ margin: "1vh" }}>
+            <p style={{fontSize:"0.8rem"}}> Diameter at ends</p>
               <input
                 style={{
                   fontSize: "0.8rem",
@@ -228,6 +232,7 @@ const Home = () => {
               />
             </label>
             <label style={{ margin: "1vh" }}>
+            <p style={{fontSize:"0.8rem"}}>Diameter at reduced section</p>
               <input
                 style={{
                   fontSize: "0.8rem",
@@ -246,6 +251,7 @@ const Home = () => {
             </label>
 
             <label style={{ margin: "1vh" }}>
+            <p style={{fontSize:"0.8rem"}}>Load in kg</p>
               <input
                 style={{
                   fontSize: "0.8rem",
@@ -351,7 +357,7 @@ const Home = () => {
           >
             % Elongation:{" "}
             <span style={{ fontSize: "0.8rem", color: "green" }}>
-              {elongation.toFixed(5)} %{" "}
+              {(elongation*100).toFixed(5)}% {" "}
             </span>
           </p>
           <p
@@ -374,7 +380,7 @@ const Home = () => {
               fontWeight: "bold",
             }}
           >
-            % Breaking Strength:{" "}
+             Breaking Strength:{" "}
             <span style={{ fontSize: "0.8rem", color: "green" }}>
               {" "}
               {breaking.toFixed(5)} N/mm*mm{" "}
